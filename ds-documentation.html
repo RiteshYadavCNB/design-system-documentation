@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Design System — Atomic Design Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   RESET + BASE
+═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  /* Brand */
+  --ink:        #0d0e12;
+  --paper:      #f5f3ee;
+  --paper2:     #ede9e1;
+  --rule:       #d9d4c9;
+  --accent:     #e8520a;
+  --accent2:    #1a6e52;
+  --accent3:    #4a3fa5;
+  --gold:       #c9952a;
+  --text:       #1a1b22;
+  --muted:      #6b6760;
+  --dim:        #9e9a93;
+
+  /* Atoms */
+  --atom-bg:    #fff8f0;
+  --atom-border:#f0c9a0;
+  --atom-text:  #8b4513;
+
+  /* Molecules */
+  --mol-bg:     #f0f8f5;
+  --mol-border: #a0d4bf;
+  --mol-text:   #1a5e42;
+
+  /* Organisms */
+  --org-bg:     #f0f0fa;
+  --org-border: #b0b0e0;
+  --org-text:   #2a2a80;
+
+  /* Templates */
+  --tpl-bg:     #fff5f0;
+  --tpl-border: #f0c0a0;
+  --tpl-text:   #8b2500;
+
+  /* Pages */
+  --pag-bg:     #f8f0ff;
+  --pag-border: #d0a0f0;
+  --pag-text:   #5a1a8b;
+
+  /* Type */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Lora', serif;
+  --font-mono:    'DM Mono', monospace;
+
+  /* Layout */
+  --sidebar-w: 260px;
+  --content-max: 860px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT SHELL
+═══════════════════════════════════════════════════════════ */
+.app { display: flex; min-height: 100vh; }
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--ink);
+  color: #fff;
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+.sidebar::-webkit-scrollbar-track { background: var(--ink); }
+.sidebar::-webkit-scrollbar-thumb { background: #2a2c38; }
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-logo-mark {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 4px;
+}
+.sidebar-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+.sidebar-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+
+.sidebar-section {
+  padding: 20px 0 8px;
+}
+.sidebar-section-label {
+  padding: 0 24px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  font-family: var(--font-display);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 24px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.nav-item:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+}
+.nav-item.active {
+  color: #fff;
+  border-left-color: var(--accent);
+  background: rgba(232,82,10,0.1);
+}
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.nav-sub {
+  padding-left: 48px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+}
+.nav-sub.active { color: rgba(255,255,255,0.75); }
+
+.progress-bar {
+  margin: 16px 24px;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  padding: 0 24px 16px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.25);
+  font-family: var(--font-mono);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════════════════════ */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════════════════════════ */
+.page-header {
+  background: var(--ink);
+  padding: 60px 64px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(232,82,10,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: 30%;
+  width: 400px; height: 200px;
+  background: radial-gradient(circle, rgba(74,63,165,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.05;
+  margin-bottom: 16px;
+  position: relative;
+}
+.page-desc {
+  font-size: 16px;
+  color: rgba(255,255,255,0.55);
+  max-width: 560px;
+  line-height: 1.7;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION PANELS
+═══════════════════════════════════════════════════════════ */
+.section {
+  display: none;
+  animation: fadeUp 0.35s ease both;
+}
+.section.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 64px 80px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CONTENT TYPOGRAPHY
+═══════════════════════════════════════════════════════════ */
+h2.section-heading {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+h3.sub-heading {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 36px 0 12px;
+}
+h4.mini-heading {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 24px 0 8px;
+}
+.lead {
+  font-size: 17px;
+  color: var(--muted);
+  margin-bottom: 32px;
+  line-height: 1.7;
+  border-left: 3px solid var(--accent);
+  padding-left: 16px;
+}
+p { margin-bottom: 16px; color: var(--muted); }
+strong { color: var(--text); font-weight: 600; }
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--paper2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent3);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DIVIDER
+═══════════════════════════════════════════════════════════ */
+.section-divider {
+  height: 1px;
+  background: var(--rule);
+  margin: 32px 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ATOMIC LEVEL BADGE
+═══════════════════════════════════════════════════════════ */
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+.level-badge.atom     { background: var(--atom-bg);    border: 1.5px solid var(--atom-border);  color: var(--atom-text);  }
+.level-badge.molecule { background: var(--mol-bg);     border: 1.5px solid var(--mol-border);   color: var(--mol-text);   }
+.level-badge.organism { background: var(--org-bg);     border: 1.5px solid var(--org-border);   color: var(--org-text);   }
+.level-badge.template { background: var(--tpl-bg);     border: 1.5px solid var(--tpl-border);   color: var(--tpl-text);   }
+.level-badge.page     { background: var(--pag-bg);     border: 1.5px solid var(--pag-border);   color: var(--pag-text);   }
+
+/* ═══════════════════════════════════════════════════════════
+   CALLOUT BOX
+═══════════════════════════════════════════════════════════ */
+.callout {
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.callout-body { flex: 1; }
+.callout-title { font-family: var(--font-display); font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.callout-text  { font-size: 13px; line-height: 1.6; margin: 0; }
+.callout.info    { background: #f0f4ff; border: 1px solid #c0cdf0; }
+.callout.info .callout-title { color: #1a3a8b; }
+.callout.info .callout-text  { color: #2a4a9b; }
+.callout.warn    { background: #fff8e8; border: 1px solid #f0d890; }
+.callout.warn .callout-title { color: #7a5a00; }
+.callout.warn .callout-text  { color: #8a6a10; }
+.callout.do      { background: #f0fff8; border: 1px solid #90e0c0; }
+.callout.do .callout-title   { color: #0a5a30; }
+.callout.do .callout-text    { color: #1a6a40; }
+.callout.dont    { background: #fff0f0; border: 1px solid #f0b0b0; }
+.callout.dont .callout-title { color: #7a0a0a; }
+.callout.dont .callout-text  { color: #8a1a1a; }
+
+/* ═══════════════════════════════════════════════════════════
+   TAXONOMY TABLE
+═══════════════════════════════════════════════════════════ */
+.taxonomy-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 13px;
+}
+.taxonomy-table th {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--paper2);
+  border-bottom: 2px solid var(--rule);
+}
+.taxonomy-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--muted);
+  vertical-align: top;
+}
+.taxonomy-table tr:hover td { background: rgba(0,0,0,0.02); }
+.taxonomy-table td:first-child { font-family: var(--font-mono); color: var(--text); font-size: 12px; }
+
+/* ═══════════════════════════════════════════════════════════
+   TOKEN DISPLAY
+═══════════════════════════════════════════════════════════ */
+.token-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+.token-card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.token-swatch {
+  height: 48px;
+  width: 100%;
+}
+.token-info {
+  padding: 8px 10px;
+}
+.token-name {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text);
+  font-weight: 500;
+}
+.token-value {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--dim);
+  margin-top: 2px;
+}
+
+/* Spacing tokens */
+.spacing-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+}
+.spacing-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.spacing-bar-wrap { flex: 1; }
+.spacing-bar {
+  height: 20px;
+  background: linear-gradient(90deg, var(--accent), rgba(232,82,10,0.2));
+  border-radius: 3px;
+}
+.spacing-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  width: 80px;
+  flex-shrink: 0;
+}
+.spacing-val {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--dim);
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INTERACTIVE CHECKLIST
+═══════════════════════════════════════════════════════════ */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 16px 0;
+}
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.check-item:hover { border-color: var(--accent); background: #fffaf7; }
+.check-item.checked {
+  background: #f5fff9;
+  border-color: #90d4b0;
+}
+.check-item.checked .check-text { color: var(--dim); text-decoration: line-through; }
+.check-box {
+  width: 18px; height: 18px;
+  border: 2px solid var(--rule);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+.check-item.checked .check-box {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: #fff;
+}
+.check-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+/* ═══════════════════════════════════════════════════════════
+   ACCORDION
+═══════════════════════════════════════════════════════════ */
+.accordion { margin: 16px 0; }
+.acc-item {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+.acc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  background: #fff;
+  transition: background 0.15s;
+  user-select: none;
+}
+.acc-header:hover { background: var(--paper2); }
+.acc-arrow {
+  font-size: 12px;
+  color: var(--dim);
+  transition: transform 0.25s;
+}
+.acc-item.open .acc-arrow { transform: rotate(90deg); }
+.acc-body {
+  display: none;
+  padding: 16px 18px;
+  background: #fdfcfa;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.acc-item.open .acc-body { display: block; }
+
+/* ═══════════════════════════════════════════════════════════
+   TABS (within section)
+═══════════════════════════════════════════════════════════ */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--rule);
+  margin-bottom: 24px;
+}
+.tab-btn {
+  padding: 10px 20px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dim);
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeUp 0.25s ease; }
+
+/* ═══════════════════════════════════════════════════════════
+   ATOMIC HIERARCHY VISUAL
+═══════════════════════════════════════════════════════════ */
+.hierarchy-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 28px 0;
+  position: relative;
+}
+.h-level {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1.5px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.h-level:hover { transform: translateX(4px); }
+.h-level.atom     { background: var(--atom-bg);    border-color: var(--atom-border); }
+.h-level.molecule { background: var(--mol-bg);     border-color: var(--mol-border);  margin-left: 20px; }
+.h-level.organism { background: var(--org-bg);     border-color: var(--org-border);  margin-left: 40px; }
+.h-level.template { background: var(--tpl-bg);     border-color: var(--tpl-border);  margin-left: 60px; }
+.h-level.page     { background: var(--pag-bg);     border-color: var(--pag-border);  margin-left: 80px; }
+
+.h-icon { font-size: 20px; flex-shrink: 0; }
+.h-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+}
+.h-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.h-count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--dim);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAMING CONVENTION BLOCK
+═══════════════════════════════════════════════════════════ */
+.naming-block {
+  background: var(--ink);
+  color: #fff;
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 16px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 2;
+}
+.naming-block .comment { color: rgba(255,255,255,0.3); }
+.naming-block .key     { color: #7dd3fc; }
+.naming-block .val     { color: #86efac; }
+.naming-block .sep     { color: rgba(255,255,255,0.4); }
+.naming-block .accent  { color: #fca5a5; }
+
+/* ═══════════════════════════════════════════════════════════
+   DO / DON'T GRID
+═══════════════════════════════════════════════════════════ */
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0;
+}
+.do-box, .dont-box {
+  border-radius: 8px;
+  padding: 16px;
+}
+.do-box {
+  background: #f0fff8;
+  border: 1.5px solid #90d4b0;
+}
+.dont-box {
+  background: #fff0f0;
+  border: 1.5px solid #f0b0b0;
+}
+.do-label, .dont-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.do-label   { color: #0a5a30; }
+.dont-label { color: #7a0a0a; }
+.do-box ul, .dont-box ul {
+  padding-left: 16px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.do-box li   { color: #1a6a40; }
+.dont-box li { color: #8a1a1a; }
+
+/* ═══════════════════════════════════════════════════════════
+   COMPONENT ANATOMY
+═══════════════════════════════════════════════════════════ */
+.anatomy-card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+.anatomy-preview {
+  padding: 32px;
+  background: var(--paper2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--rule);
+}
+.anatomy-parts {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.anatomy-part {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.anatomy-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.anatomy-part-name { font-weight: 600; color: var(--text); min-width: 90px; }
+.anatomy-part-desc { color: var(--muted); }
+
+/* Mock button for anatomy */
+.mock-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: default;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FIGMA-SPECIFIC RULES
+═══════════════════════════════════════════════════════════ */
+.figma-rule {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.figma-rule-num {
+  width: 24px; height: 24px;
+  background: var(--accent3);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.figma-rule-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.figma-rule-desc { color: var(--muted); line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════════════════
+   PROGRESS TRACKER
+═══════════════════════════════════════════════════════════ */
+.phase-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 20px 0;
+}
+.phase-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+}
+.phase-dot-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+.phase-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  border: 2px solid var(--rule);
+  background: #fff;
+  color: var(--dim);
+}
+.phase-dot.done   { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+.phase-dot.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.phase-line {
+  width: 2px;
+  height: 20px;
+  background: var(--rule);
+  margin-top: 2px;
+}
+.phase-content { flex: 1; }
+.phase-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.phase-items { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+/* ═══════════════════════════════════════════════════════════
+   SEARCH BAR
+═══════════════════════════════════════════════════════════ */
+.search-wrap {
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.search-input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 7px 10px 7px 30px;
+  color: #fff;
+  font-size: 12px;
+  font-family: var(--font-display);
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 8px center;
+}
+.search-input::placeholder { color: rgba(255,255,255,0.25); }
+.search-input:focus { border-color: rgba(232,82,10,0.5); }
+
+/* ═══════════════════════════════════════════════════════════
+   TOP NAV BAR
+═══════════════════════════════════════════════════════════ */
+.topbar {
+  height: 52px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 64px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.topbar-breadcrumb span { color: var(--text); }
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.topbar-btn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--rule);
+  background: #fff;
+  color: var(--text);
+  transition: all 0.15s;
+}
+.topbar-btn:hover { border-color: var(--accent); color: var(--accent); }
+.topbar-btn.primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.topbar-btn.primary:hover { background: #c94000; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE MENU TOGGLE
+═══════════════════════════════════════════════════════════ */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px; height: 48px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 200;
+  font-size: 18px;
+  box-shadow: 0 4px 20px rgba(232,82,10,0.4);
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+  .sidebar.open { transform: none; }
+  .sidebar-overlay.open { display: block; }
+  .main { margin-left: 0; }
+  .menu-toggle { display: flex; align-items: center; justify-content: center; }
+  .page-header { padding: 40px 24px 32px; }
+  .section-inner { padding: 32px 24px 60px; }
+  .topbar { padding: 0 24px; }
+  .do-dont { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INTRO HERO
+═══════════════════════════════════════════════════════════ */
+.intro-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 32px 0;
+}
+.intro-card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 20px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.intro-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+.intro-card-icon { font-size: 28px; margin-bottom: 10px; }
+.intro-card-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.intro-card-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+@media (max-width: 600px) {
+  .intro-hero { grid-template-columns: 1fr; }
+  .autolayout-grid { grid-template-columns: 1fr; }
+  .token-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="overlay"></div>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="sidebar-logo-mark">WanderOn</span>
+    <div class="sidebar-title">Design System</div>
+    <div class="sidebar-sub">Atomic Design Documentation v1.0</div>
+  </div>
+
+  <div class="search-wrap">
+    <input class="search-input" placeholder="Search sections..." id="search" />
+  </div>
+
+  <nav>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Getting Started</div>
+      <a class="nav-item active" data-section="overview" href="#">
+        <span class="nav-dot" style="background:#e8520a"></span> Overview
+      </a>
+      <a class="nav-item" data-section="philosophy" href="#">
+        <span class="nav-dot" style="background:#c9952a"></span> Philosophy
+      </a>
+      <a class="nav-item" data-section="taxonomy" href="#">
+        <span class="nav-dot" style="background:#4a3fa5"></span> Taxonomy
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Foundations</div>
+      <a class="nav-item" data-section="tokens" href="#">
+        <span class="nav-dot" style="background:#1a6e52"></span> Design Tokens
+      </a>
+      <a class="nav-item" data-section="color" href="#">
+        <span class="nav-dot" style="background:#e8520a"></span> Color System
+      </a>
+      <a class="nav-item" data-section="typography" href="#">
+        <span class="nav-dot" style="background:#4a3fa5"></span> Typography
+      </a>
+      <a class="nav-item" data-section="spacing" href="#">
+        <span class="nav-dot" style="background:#1a6e52"></span> Spacing & Grid
+      </a>
+      <a class="nav-item" data-section="effects" href="#">
+        <span class="nav-dot" style="background:#c9952a"></span> Effects & Motion
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Atomic Levels</div>
+      <a class="nav-item" data-section="atoms" href="#">
+        <span class="nav-dot" style="background:#c9803a"></span> ⚛ Atoms
+      </a>
+      <a class="nav-item" data-section="molecules" href="#">
+        <span class="nav-dot" style="background:#1a9e72"></span> 🧪 Molecules
+      </a>
+      <a class="nav-item" data-section="organisms" href="#">
+        <span class="nav-dot" style="background:#4a5fcc"></span> 🦠 Organisms
+      </a>
+      <a class="nav-item" data-section="templates" href="#">
+        <span class="nav-dot" style="background:#cc4a1a"></span> 📐 Templates
+      </a>
+      <a class="nav-item" data-section="pages" href="#">
+        <span class="nav-dot" style="background:#8a2acc"></span> 📄 Pages
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Figma Practice</div>
+      <a class="nav-item" data-section="figma-rules" href="#">
+        <span class="nav-dot" style="background:#e8520a"></span> Figma Rules
+      </a>
+      <a class="nav-item" data-section="naming" href="#">
+        <span class="nav-dot" style="background:#4a3fa5"></span> Naming Conventions
+      </a>
+      <a class="nav-item" data-section="variables" href="#">
+        <span class="nav-dot" style="background:#1a6e52"></span> Variables Setup
+      </a>
+      <a class="nav-item" data-section="handoff" href="#">
+        <span class="nav-dot" style="background:#c9952a"></span> Dev Handoff
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Governance</div>
+      <a class="nav-item" data-section="checklist" href="#">
+        <span class="nav-dot" style="background:#e8520a"></span> Build Checklist
+      </a>
+      <a class="nav-item" data-section="roadmap" href="#">
+        <span class="nav-dot" style="background:#4a3fa5"></span> Roadmap
+      </a>
+    </div>
+  </nav>
+
+  <div style="margin-top:auto; padding: 16px 0 8px;">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-label">
+      <span id="progress-label">Reading progress</span>
+      <span id="progress-pct">0%</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-breadcrumb">
+      WanderOn DS / <span id="breadcrumb-current">Overview</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="topbar-btn" onclick="window.print()">🖨 Print</button>
+      <button class="topbar-btn primary" onclick="copyCurrentSection()">📋 Copy section</button>
+    </div>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header" id="page-header">
+    <div class="page-eyebrow" id="header-eyebrow">Getting Started</div>
+    <h1 class="page-title" id="header-title">Atomic Design System</h1>
+    <p class="page-desc" id="header-desc">A complete guide to building WanderOn's scalable design system using Atomic Design principles — from tokens to pages.</p>
+  </div>
+
+  <!-- ════════════ SECTION: OVERVIEW ════════════ -->
+  <div class="section active" id="section-overview">
+    <div class="section-inner">
+      <h2 class="section-heading">Welcome to DS Documentation</h2>
+      <p class="lead">This document is your team's single source of truth for building the WanderOn design system. It is structured progressively — start here, go deep as needed.</p>
+
+      <div class="intro-hero">
+        <div class="intro-card" onclick="navigate('tokens')">
+          <div class="intro-card-icon">🪙</div>
+          <div class="intro-card-title">Start with Tokens</div>
+          <div class="intro-card-desc">Design tokens are the foundation. Define colors, spacing, and typography as variables before touching components.</div>
+        </div>
+        <div class="intro-card" onclick="navigate('atoms')">
+          <div class="intro-card-icon">⚛</div>
+          <div class="intro-card-title">Build Atoms First</div>
+          <div class="intro-card-desc">Every component is composed of atoms. A button is not atomic — a color, a radius, and a text style are.</div>
+        </div>
+        <div class="intro-card" onclick="navigate('figma-rules')">
+          <div class="intro-card-icon">📐</div>
+          <div class="intro-card-title">Follow Figma Rules</div>
+          <div class="intro-card-desc">Naming conventions, frame structure, and variable binding discipline are what make MCP and dev handoff work.</div>
+        </div>
+        <div class="intro-card" onclick="navigate('checklist')">
+          <div class="intro-card-icon">✅</div>
+          <div class="intro-card-title">Use the Checklist</div>
+          <div class="intro-card-desc">Each component level has a definition-of-done checklist. Check it before marking any component ready for handoff.</div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <h3 class="sub-heading">The 5 Atomic Levels</h3>
+      <p>Click any level to go directly to that section.</p>
+
+      <div class="hierarchy-visual">
+        <div class="h-level atom" onclick="navigate('atoms')">
+          <span class="h-icon">⚛</span>
+          <div>
+            <div class="h-name">Atoms</div>
+            <div class="h-desc">Basic building blocks — tokens, text styles, color, icons, spacing units</div>
+          </div>
+          <span class="h-count">~40–60 items</span>
+        </div>
+        <div class="h-level molecule" onclick="navigate('molecules')">
+          <span class="h-icon">🧪</span>
+          <div>
+            <div class="h-name">Molecules</div>
+            <div class="h-desc">Simple UI components — buttons, inputs, tags, avatars, toggles</div>
+          </div>
+          <span class="h-count">~20–35 items</span>
+        </div>
+        <div class="h-level organism" onclick="navigate('organisms')">
+          <span class="h-icon">🦠</span>
+          <div>
+            <div class="h-name">Organisms</div>
+            <div class="h-desc">Complex UI sections — navbars, cards, forms, tables, modals</div>
+          </div>
+          <span class="h-count">~15–25 items</span>
+        </div>
+        <div class="h-level template" onclick="navigate('templates')">
+          <span class="h-icon">📐</span>
+          <div>
+            <div class="h-name">Templates</div>
+            <div class="h-desc">Page-level wireframes — layout with real component placements, no data</div>
+          </div>
+          <span class="h-count">~8–15 items</span>
+        </div>
+        <div class="h-level page" onclick="navigate('pages')">
+          <span class="h-icon">📄</span>
+          <div>
+            <div class="h-name">Pages</div>
+            <div class="h-desc">Templates with real content — final deliverable, used for testing and handoff</div>
+          </div>
+          <span class="h-count">~10–20 items</span>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <div class="callout-title">Why Atomic Design?</div>
+          <p class="callout-text">Atomic Design ensures every UI decision is traceable back to a decision in your token system. When a color changes, it changes everywhere — in Figma, in code, in the product — because it was defined once and referenced everywhere.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: PHILOSOPHY ════════════ -->
+  <div class="section" id="section-philosophy">
+    <div class="section-inner">
+      <h2 class="section-heading">Core Philosophy</h2>
+      <p class="lead">The three principles that govern every design decision in this system.</p>
+
+      <div class="accordion">
+        <div class="acc-item open">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <span>1. Single Source of Truth</span>
+            <span class="acc-arrow">▶</span>
+          </div>
+          <div class="acc-body">
+            Every value — a color, a spacing unit, a font size — must be defined <strong>once</strong> as a token and referenced everywhere else. The moment a designer types <code>#3B82F6</code> directly in a fill, that value is no longer part of the system. It is a defect. The design system is only as strong as the strictness with which it is followed.
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <span>2. Composability Over Duplication</span>
+            <span class="acc-arrow">▶</span>
+          </div>
+          <div class="acc-body">
+            Before creating any new component, ask: can this be built from existing atoms and molecules? A new component should be a new <em>composition</em>, not new raw material. Duplication creates drift — two "primary buttons" that look 2px apart, two "cards" with different shadow values, because someone created one from scratch instead of using the existing one.
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <span>3. Design → Token → Code</span>
+            <span class="acc-arrow">▶</span>
+          </div>
+          <div class="acc-body">
+            Every visual property flows in one direction: <strong>Design Decision → Named Token → Code Variable</strong>. A designer decides "our primary button background is the brand primary color." That decision becomes a Figma Variable (<code>color/brand/primary</code>) which maps to a code token (<code>theme.color.brand.primary</code>). Never the reverse — code should never define a visual value that isn't in the design system.
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+      <h3 class="sub-heading">What This System Is Not</h3>
+      <div class="do-dont">
+        <div class="do-box">
+          <div class="do-label">✓ This system IS</div>
+          <ul>
+            <li>A living document that evolves</li>
+            <li>A shared language between design and dev</li>
+            <li>A constraint that speeds up decisions</li>
+            <li>A multiplier on individual quality</li>
+            <li>The source developers pull from</li>
+          </ul>
+        </div>
+        <div class="dont-box">
+          <div class="dont-label">✕ This system is NOT</div>
+          <ul>
+            <li>A rigid set of rules that blocks creativity</li>
+            <li>A finished product — it will always change</li>
+            <li>A library of every possible UI pattern</li>
+            <li>The responsibility of one person</li>
+            <li>Optional for new components</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: TAXONOMY ════════════ -->
+  <div class="section" id="section-taxonomy">
+    <div class="section-inner">
+      <h2 class="section-heading">Design System Taxonomy</h2>
+      <p class="lead">The complete classification of every design element — what it is, where it lives in Figma, and what level of the atomic hierarchy it belongs to.</p>
+
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'tax-all')">All Layers</button>
+        <button class="tab-btn" onclick="switchTab(this,'tax-figma')">Figma Pages</button>
+        <button class="tab-btn" onclick="switchTab(this,'tax-ownership')">Ownership</button>
+      </div>
+
+      <div class="tab-pane active" id="tax-all">
+        <table class="taxonomy-table">
+          <thead><tr><th>Element</th><th>Atomic Level</th><th>Figma Page</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Color Variable</td><td><span class="level-badge atom" style="padding:2px 8px;font-size:10px">Atom</span></td><td>🪙 Foundations</td><td>Primitive and semantic color values</td></tr>
+            <tr><td>Spacing Unit</td><td><span class="level-badge atom" style="padding:2px 8px;font-size:10px">Atom</span></td><td>🪙 Foundations</td><td>4pt-based spacing scale</td></tr>
+            <tr><td>Type Style</td><td><span class="level-badge atom" style="padding:2px 8px;font-size:10px">Atom</span></td><td>🪙 Foundations</td><td>Display, heading, body, label, caption, code</td></tr>
+            <tr><td>Icon</td><td><span class="level-badge atom" style="padding:2px 8px;font-size:10px">Atom</span></td><td>🎨 Atoms</td><td>Individual SVG icon components</td></tr>
+            <tr><td>Border Radius</td><td><span class="level-badge atom" style="padding:2px 8px;font-size:10px">Atom</span></td><td>🪙 Foundations</td><td>Radius scale from none to full</td></tr>
+            <tr><td>Shadow</td><td><span class="level-badge atom" style="padding:2px 8px;font-size:10px">Atom</span></td><td>🪙 Foundations</td><td>Elevation-based shadow tokens</td></tr>
+            <tr><td>Button</td><td><span class="level-badge molecule" style="padding:2px 8px;font-size:10px">Molecule</span></td><td>🧪 Molecules</td><td>Primary, secondary, ghost, danger, icon-only</td></tr>
+            <tr><td>Input</td><td><span class="level-badge molecule" style="padding:2px 8px;font-size:10px">Molecule</span></td><td>🧪 Molecules</td><td>Text, password, search, textarea</td></tr>
+            <tr><td>Badge / Tag</td><td><span class="level-badge molecule" style="padding:2px 8px;font-size:10px">Molecule</span></td><td>🧪 Molecules</td><td>Status, label, count indicators</td></tr>
+            <tr><td>Avatar</td><td><span class="level-badge molecule" style="padding:2px 8px;font-size:10px">Molecule</span></td><td>🧪 Molecules</td><td>User/entity image with fallback</td></tr>
+            <tr><td>Toggle / Checkbox / Radio</td><td><span class="level-badge molecule" style="padding:2px 8px;font-size:10px">Molecule</span></td><td>🧪 Molecules</td><td>Boolean and selection controls</td></tr>
+            <tr><td>Card</td><td><span class="level-badge organism" style="padding:2px 8px;font-size:10px">Organism</span></td><td>🦠 Organisms</td><td>Content container with image, text, actions</td></tr>
+            <tr><td>Navbar</td><td><span class="level-badge organism" style="padding:2px 8px;font-size:10px">Organism</span></td><td>🦠 Organisms</td><td>Top-level navigation bar</td></tr>
+            <tr><td>Modal</td><td><span class="level-badge organism" style="padding:2px 8px;font-size:10px">Organism</span></td><td>🦠 Organisms</td><td>Overlay dialog with header, body, footer</td></tr>
+            <tr><td>Form</td><td><span class="level-badge organism" style="padding:2px 8px;font-size:10px">Organism</span></td><td>🦠 Organisms</td><td>Grouped input fields with validation</td></tr>
+            <tr><td>Table</td><td><span class="level-badge organism" style="padding:2px 8px;font-size:10px">Organism</span></td><td>🦠 Organisms</td><td>Data table with sorting, pagination</td></tr>
+            <tr><td>Listing Page Layout</td><td><span class="level-badge template" style="padding:2px 8px;font-size:10px">Template</span></td><td>📐 Templates</td><td>Grid/list layout for search results</td></tr>
+            <tr><td>Detail Page Layout</td><td><span class="level-badge template" style="padding:2px 8px;font-size:10px">Template</span></td><td>📐 Templates</td><td>Hero + content + sidebar layout</td></tr>
+            <tr><td>Dashboard Layout</td><td><span class="level-badge template" style="padding:2px 8px;font-size:10px">Template</span></td><td>📐 Templates</td><td>Stats + charts + table layout</td></tr>
+            <tr><td>Homepage</td><td><span class="level-badge page" style="padding:2px 8px;font-size:10px">Page</span></td><td>📄 Pages</td><td>Real content, final visual design</td></tr>
+            <tr><td>Booking Flow Pages</td><td><span class="level-badge page" style="padding:2px 8px;font-size:10px">Page</span></td><td>📄 Pages</td><td>Step 1–4 booking funnel screens</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane" id="tax-figma">
+        <div class="callout info">
+          <span class="callout-icon">📁</span>
+          <div class="callout-body">
+            <div class="callout-title">Figma File Structure</div>
+            <p class="callout-text">Each Figma file should have these pages in order. Do not mix atomic levels across pages. If a component is hard to classify, use the rule: "Could this exist on its own?" — if no, it's an atom or molecule. If yes, it might be an organism.</p>
+          </div>
+        </div>
+
+        <div class="naming-block">
+<span class="comment">// Figma File Page Order</span>
+<br/><br/>
+<span class="accent">📚 Cover</span>        <span class="sep">→</span> <span class="val">File title, version, last updated</span>
+<br/><span class="accent">🪙 Foundations</span>  <span class="sep">→</span> <span class="val">Token collections, type scale, color palette</span>
+<br/><span class="accent">⚛ Atoms</span>         <span class="sep">→</span> <span class="val">Icons, dividers, avatars, spinners</span>
+<br/><span class="accent">🧪 Molecules</span>    <span class="sep">→</span> <span class="val">Buttons, inputs, toggles, badges, chips</span>
+<br/><span class="accent">🦠 Organisms</span>    <span class="sep">→</span> <span class="val">Cards, forms, navbars, tables, modals</span>
+<br/><span class="accent">📐 Templates</span>    <span class="sep">→</span> <span class="val">Page wireframes with component slots</span>
+<br/><span class="accent">📄 Pages</span>         <span class="sep">→</span> <span class="val">Final screens with real content</span>
+<br/><span class="accent">🔬 Sandbox</span>      <span class="sep">→</span> <span class="val">Experiments, WIP — never reference in templates</span>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tax-ownership">
+        <table class="taxonomy-table">
+          <thead><tr><th>Level</th><th>Who Creates</th><th>Who Approves</th><th>Review Frequency</th></tr></thead>
+          <tbody>
+            <tr><td>Foundations / Tokens</td><td>Lead Designer</td><td>Design Lead + Tech Lead</td><td>Quarterly</td></tr>
+            <tr><td>Atoms</td><td>Lead Designer</td><td>Design Lead</td><td>Monthly</td></tr>
+            <tr><td>Molecules</td><td>Any Designer</td><td>Lead Designer</td><td>Bi-weekly</td></tr>
+            <tr><td>Organisms</td><td>Any Designer</td><td>Lead Designer</td><td>Per sprint</td></tr>
+            <tr><td>Templates</td><td>Project Designer</td><td>Design Lead + PM</td><td>Per feature</td></tr>
+            <tr><td>Pages</td><td>Project Designer</td><td>PM + Stakeholder</td><td>Per release</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: TOKENS ════════════ -->
+  <div class="section" id="section-tokens">
+    <div class="section-inner">
+      <div class="level-badge atom">⚛ Foundation Layer</div>
+      <h2 class="section-heading">Design Tokens</h2>
+      <p class="lead">Tokens are the DNA of the design system. Everything is a token, or is built from tokens. They bridge Figma Variables and code.</p>
+
+      <h3 class="sub-heading">Three-Tier Token Architecture</h3>
+
+      <div class="naming-block">
+<span class="comment">// Tier 1: Primitives — raw values, never used directly in designs</span>
+<br/><span class="key">color/red/500</span>       <span class="sep">=</span> <span class="val">#EF4444</span>
+<br/><span class="key">color/blue/600</span>      <span class="sep">=</span> <span class="val">#2563EB</span>
+<br/><span class="key">size/4</span>              <span class="sep">=</span> <span class="val">4px</span>
+<br/><span class="key">size/16</span>             <span class="sep">=</span> <span class="val">16px</span>
+<br/><br/>
+<span class="comment">// Tier 2: Semantic — what designers apply in Figma</span>
+<br/><span class="key">color/feedback/danger</span>  <span class="sep">=</span> <span class="val">{color/red/500}</span>
+<br/><span class="key">color/brand/primary</span>    <span class="sep">=</span> <span class="val">{color/blue/600}</span>
+<br/><span class="key">spacing/md</span>             <span class="sep">=</span> <span class="val">{size/16}</span>
+<br/><br/>
+<span class="comment">// Tier 3: Component — scoped to a specific component</span>
+<br/><span class="key">button/bg/primary</span>      <span class="sep">=</span> <span class="val">{color/brand/primary}</span>
+<br/><span class="key">button/padding/h</span>       <span class="sep">=</span> <span class="val">{spacing/md}</span>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">Critical Rule: Never Skip a Tier</div>
+          <p class="callout-text">A button should reference <code>button/bg/primary</code>, not <code>color/brand/primary</code> directly. And <code>button/bg/primary</code> should reference <code>color/brand/primary</code>, not <code>#2563EB</code>. This chain is what makes theming and dark mode possible.</p>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <h3 class="sub-heading">Token Naming Pattern</h3>
+      <div class="naming-block">
+<span class="comment">// Pattern: category/variant/state/property</span>
+<br/><br/>
+<span class="key">color</span><span class="sep">/</span><span class="val">background</span><span class="sep">/</span><span class="accent">default</span>
+<br/><span class="key">color</span><span class="sep">/</span><span class="val">background</span><span class="sep">/</span><span class="accent">subtle</span>
+<br/><span class="key">color</span><span class="sep">/</span><span class="val">content</span><span class="sep">/</span><span class="accent">primary</span>
+<br/><span class="key">color</span><span class="sep">/</span><span class="val">content</span><span class="sep">/</span><span class="accent">disabled</span>
+<br/><span class="key">color</span><span class="sep">/</span><span class="val">feedback</span><span class="sep">/</span><span class="accent">success</span>
+<br/><span class="key">spacing</span><span class="sep">/</span><span class="val">inset</span><span class="sep">/</span><span class="accent">md</span>
+<br/><span class="key">radius</span><span class="sep">/</span><span class="val">sm</span>
+<br/><span class="key">shadow</span><span class="sep">/</span><span class="val">elevation</span><span class="sep">/</span><span class="accent">raised</span>
+<br/><span class="key">typography</span><span class="sep">/</span><span class="val">size</span><span class="sep">/</span><span class="accent">body-md</span>
+      </div>
+
+      <div class="callout do">
+        <span class="callout-icon">✓</span>
+        <div class="callout-body">
+          <div class="callout-title">In Figma: Use Variable Collections</div>
+          <p class="callout-text">Create two collections in Figma: <code>Primitives</code> (hidden, raw values) and <code>Semantic</code> (what designers use). Enable the Semantic collection in all design files. Never expose Primitives in the color picker — they should only appear as references inside Semantic variables.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: COLOR ════════════ -->
+  <div class="section" id="section-color">
+    <div class="section-inner">
+      <div class="level-badge atom">⚛ Foundation</div>
+      <h2 class="section-heading">Color System</h2>
+      <p class="lead">Colors are defined in three tiers: primitive palette → semantic roles → component-scoped. Designers only ever apply semantic or component colors.</p>
+
+      <h3 class="sub-heading">Semantic Color Roles</h3>
+
+      <div class="token-grid">
+        <div class="token-card"><div class="token-swatch" style="background:#0d0e12"></div><div class="token-info"><div class="token-name">bg/default</div><div class="token-value">Page background</div></div></div>
+        <div class="token-card"><div class="token-swatch" style="background:#1f2028"></div><div class="token-info"><div class="token-name">surface/default</div><div class="token-value">Card, panel surface</div></div></div>
+        <div class="token-card"><div class="token-swatch" style="background:#e8520a"></div><div class="token-info"><div class="token-name">brand/primary</div><div class="token-value">Primary accent</div></div></div>
+        <div class="token-card"><div class="token-swatch" style="background:#1a6e52"></div><div class="token-info"><div class="token-name">brand/secondary</div><div class="token-value">Secondary accent</div></div></div>
+        <div class="token-card"><div class="token-swatch" style="background:#4a3fa5"></div><div class="token-info"><div class="token-name">brand/accent</div><div class="token-value">Tertiary / links</div></div></div>
+        <div class="token-card"><div class="token-swatch" style="background:#1a6e52"></div><div class="token-info"><div class="token-name">feedback/success</div><div class="token-value">Success state</div></div></div>
+        <div class="token-card"><div class="token-swatch" style="background:#c9952a"></div><div class="token-info"><div class="token-name">feedback/warning</div><div class="token-value">Warning state</div></div></div>
+        <div class="token-card"><div class="token-swatch" style="background:#d03030"></div><div class="token-info"><div class="token-name">feedback/danger</div><div class="token-value">Error / destructive</div></div></div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <h3 class="sub-heading">Content Color Roles</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Token</th><th>Use</th><th>Contrast</th></tr></thead>
+        <tbody>
+          <tr><td>content/primary</td><td>Main headings, body text</td><td>AA / AAA on default bg</td></tr>
+          <tr><td>content/secondary</td><td>Subtitles, captions</td><td>AA on default bg</td></tr>
+          <tr><td>content/disabled</td><td>Disabled text</td><td>Below AA — intentional</td></tr>
+          <tr><td>content/inverse</td><td>Text on dark/colored bg</td><td>AA / AAA on brand colors</td></tr>
+          <tr><td>content/on-color</td><td>Text on colored surfaces</td><td>Must verify per surface</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">Dark Mode Readiness</div>
+          <p class="callout-text">All semantic tokens must have both a Light and Dark mode value in Figma. Use Figma's Variable Modes feature — one collection, two modes. This is what makes dark mode a one-click switch, not a redesign.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: TYPOGRAPHY ════════════ -->
+  <div class="section" id="section-typography">
+    <div class="section-inner">
+      <div class="level-badge atom">⚛ Foundation</div>
+      <h2 class="section-heading">Typography System</h2>
+      <p class="lead">Typography is not just font size. It is a complete set of decisions: family, scale, weight, leading, tracking, and usage rules — defined as tokens and text styles.</p>
+
+      <h3 class="sub-heading">Type Scale (4pt base)</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Style Name</th><th>Size</th><th>Weight</th><th>Line Height</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>display-lg</td><td>56px</td><td>800</td><td>1.05</td><td>Hero titles only</td></tr>
+          <tr><td>display-sm</td><td>40px</td><td>700</td><td>1.1</td><td>Section heroes</td></tr>
+          <tr><td>heading-xl</td><td>32px</td><td>700</td><td>1.15</td><td>Page H1</td></tr>
+          <tr><td>heading-lg</td><td>24px</td><td>700</td><td>1.25</td><td>Section heading</td></tr>
+          <tr><td>heading-md</td><td>20px</td><td>600</td><td>1.3</td><td>Card title, H3</td></tr>
+          <tr><td>heading-sm</td><td>16px</td><td>600</td><td>1.4</td><td>Sidebar heading</td></tr>
+          <tr><td>body-lg</td><td>17px</td><td>400</td><td>1.7</td><td>Lead paragraph</td></tr>
+          <tr><td>body-md</td><td>15px</td><td>400</td><td>1.7</td><td>Main body text</td></tr>
+          <tr><td>body-sm</td><td>13px</td><td>400</td><td>1.6</td><td>Secondary text</td></tr>
+          <tr><td>label-lg</td><td>14px</td><td>600</td><td>1.4</td><td>Button, form label</td></tr>
+          <tr><td>label-md</td><td>12px</td><td>600</td><td>1.4</td><td>Tag, nav item</td></tr>
+          <tr><td>label-sm</td><td>11px</td><td>700</td><td>1.3</td><td>Eyebrow, chip</td></tr>
+          <tr><td>caption</td><td>11px</td><td>400</td><td>1.5</td><td>Image caption, meta</td></tr>
+          <tr><td>code</td><td>13px</td><td>400</td><td>1.6</td><td>Code blocks, tokens</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout do">
+        <span class="callout-icon">✓</span>
+        <div class="callout-body">
+          <div class="callout-title">In Figma: Create Text Styles, Not Manual Type</div>
+          <p class="callout-text">Every type style above must be a <strong>Figma Text Style</strong> with the exact name shown. Never set font size manually on a text layer — always apply a text style. Bind font size and line height to typography variables for future scalability.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: SPACING ════════════ -->
+  <div class="section" id="section-spacing">
+    <div class="section-inner">
+      <div class="level-badge atom">⚛ Foundation</div>
+      <h2 class="section-heading">Spacing & Grid</h2>
+      <p class="lead">All spacing is a multiple of 4px. No exceptions. This creates visual rhythm and ensures consistent density across all products.</p>
+
+      <h3 class="sub-heading">Spacing Scale</h3>
+      <div class="spacing-demo">
+        <div class="spacing-row"><span class="spacing-label">spacing/1</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:4px"></div></div><span class="spacing-val">4px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/2</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:8px"></div></div><span class="spacing-val">8px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/3</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:12px"></div></div><span class="spacing-val">12px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/4 (md)</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:16px"></div></div><span class="spacing-val">16px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/5</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:20px"></div></div><span class="spacing-val">20px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/6</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:24px"></div></div><span class="spacing-val">24px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/8</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:32px"></div></div><span class="spacing-val">32px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/10</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:40px"></div></div><span class="spacing-val">40px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/12</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:48px"></div></div><span class="spacing-val">48px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/16</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:64px"></div></div><span class="spacing-val">64px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/20</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:80px"></div></div><span class="spacing-val">80px</span></div>
+        <div class="spacing-row"><span class="spacing-label">spacing/24</span><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:96px"></div></div><span class="spacing-val">96px</span></div>
+      </div>
+
+      <div class="section-divider"></div>
+      <h3 class="sub-heading">Breakpoints</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Name</th><th>Min Width</th><th>Cols</th><th>Gutter</th><th>Margin</th></tr></thead>
+        <tbody>
+          <tr><td>xs (mobile)</td><td>0px</td><td>4</td><td>16px</td><td>16px</td></tr>
+          <tr><td>sm (mobile-lg)</td><td>480px</td><td>4</td><td>16px</td><td>20px</td></tr>
+          <tr><td>md (tablet)</td><td>768px</td><td>8</td><td>20px</td><td>24px</td></tr>
+          <tr><td>lg (desktop)</td><td>1024px</td><td>12</td><td>24px</td><td>40px</td></tr>
+          <tr><td>xl (wide)</td><td>1280px</td><td>12</td><td>24px</td><td>60px</td></tr>
+          <tr><td>2xl (max)</td><td>1440px</td><td>12</td><td>32px</td><td>auto (centered)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: EFFECTS ════════════ -->
+  <div class="section" id="section-effects">
+    <div class="section-inner">
+      <div class="level-badge atom">⚛ Foundation</div>
+      <h2 class="section-heading">Effects & Motion</h2>
+      <p class="lead">Effects are not decoration — they are information. Shadows communicate elevation. Motion communicates causality. Define both as tokens.</p>
+
+      <h3 class="sub-heading">Shadow Scale (Elevation)</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Token</th><th>CSS Value</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>shadow/none</td><td>none</td><td>Flat elements, table rows</td></tr>
+          <tr><td>shadow/xs</td><td>0 1px 2px rgba(0,0,0,.05)</td><td>Subtle border replacement</td></tr>
+          <tr><td>shadow/sm</td><td>0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06)</td><td>Inputs, chips on focus</td></tr>
+          <tr><td>shadow/md</td><td>0 4px 6px rgba(0,0,0,.07)</td><td>Cards, dropdowns</td></tr>
+          <tr><td>shadow/lg</td><td>0 10px 15px rgba(0,0,0,.1)</td><td>Modals, popovers</td></tr>
+          <tr><td>shadow/xl</td><td>0 20px 25px rgba(0,0,0,.1)</td><td>Floating panels</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub-heading">Motion Tokens</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>duration/instant</td><td>0ms</td><td>No animation</td></tr>
+          <tr><td>duration/fast</td><td>100ms</td><td>Micro-interactions (hover)</td></tr>
+          <tr><td>duration/normal</td><td>200ms</td><td>Most transitions</td></tr>
+          <tr><td>duration/slow</td><td>300ms</td><td>Modal open/close</td></tr>
+          <tr><td>duration/slower</td><td>500ms</td><td>Page transitions</td></tr>
+          <tr><td>easing/ease-out</td><td>cubic-bezier(0,0,.2,1)</td><td>Elements entering</td></tr>
+          <tr><td>easing/ease-in</td><td>cubic-bezier(.4,0,1,1)</td><td>Elements exiting</td></tr>
+          <tr><td>easing/spring</td><td>cubic-bezier(.34,1.56,.64,1)</td><td>Playful interactions</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: ATOMS ════════════ -->
+  <div class="section" id="section-atoms">
+    <div class="section-inner">
+      <div class="level-badge atom">⚛ Level 1</div>
+      <h2 class="section-heading">Atoms</h2>
+      <p class="lead">Atoms are the smallest possible UI units. They cannot be broken down further without losing their meaning. They are not components — they are the raw material components are made from.</p>
+
+      <div class="callout info">
+        <span class="callout-icon">🧬</span>
+        <div class="callout-body">
+          <div class="callout-title">What counts as an Atom?</div>
+          <p class="callout-text">A color is an atom. A spacing value is an atom. An icon is an atom. A text style is an atom. A single HTML element with no children that cannot be simplified further — that's an atom. A button is NOT an atom (it's a molecule).</p>
+        </div>
+      </div>
+
+      <h3 class="sub-heading">Complete Atom Inventory</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Atom</th><th>Figma Component</th><th>States</th><th>Variables Used</th></tr></thead>
+        <tbody>
+          <tr><td>Color Token</td><td>— (Variable)</td><td>N/A</td><td>Primitive colors</td></tr>
+          <tr><td>Text Style</td><td>— (Text Style)</td><td>N/A</td><td>typography/*</td></tr>
+          <tr><td>Spacing Unit</td><td>— (Variable)</td><td>N/A</td><td>spacing/*</td></tr>
+          <tr><td>Icon</td><td>Icon/[name]</td><td>default, hover</td><td>color/content/*</td></tr>
+          <tr><td>Divider</td><td>Divider/[direction]</td><td>default, subtle, strong</td><td>color/border/*</td></tr>
+          <tr><td>Spinner</td><td>Spinner/[size]</td><td>default</td><td>color/brand/primary</td></tr>
+          <tr><td>Dot indicator</td><td>Dot/[status]</td><td>default, pulse</td><td>color/feedback/*</td></tr>
+          <tr><td>Focus Ring</td><td>FocusRing</td><td>visible, hidden</td><td>color/brand/primary</td></tr>
+          <tr><td>Skeleton</td><td>Skeleton/[shape]</td><td>loading</td><td>color/surface/raised</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub-heading">Icon System Rules</h3>
+      <div class="figma-rule">
+        <div class="figma-rule-num">1</div>
+        <div><div class="figma-rule-title">Size scale: 12 / 16 / 20 / 24 / 32px only</div><div class="figma-rule-desc">Never resize an icon to an arbitrary value. The size scale matches the 4pt grid. Icon components should have a Size variant: xs(12) / sm(16) / md(20) / lg(24) / xl(32).</div></div>
+      </div>
+      <div class="figma-rule">
+        <div class="figma-rule-num">2</div>
+        <div><div class="figma-rule-title">Naming: Icon/[category]/[name]</div><div class="figma-rule-desc">Example: <code>Icon/navigation/arrow-right</code>, <code>Icon/action/edit</code>, <code>Icon/status/check-circle</code>. Consistent naming enables search and the manifest generator to correctly map icon usage.</div></div>
+      </div>
+      <div class="figma-rule">
+        <div class="figma-rule-num">3</div>
+        <div><div class="figma-rule-title">Color bound to content variable</div><div class="figma-rule-desc">Icon fills should be bound to <code>color/content/primary</code> or <code>color/content/secondary</code> by default. Never hardcode an icon color.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: MOLECULES ════════════ -->
+  <div class="section" id="section-molecules">
+    <div class="section-inner">
+      <div class="level-badge molecule">🧪 Level 2</div>
+      <h2 class="section-heading">Molecules</h2>
+      <p class="lead">Molecules are the first level of functional UI. They are simple, purposeful groupings of atoms that have a single function. A button is a molecule. It has a background (atom), a text style (atom), and optional icon (atom).</p>
+
+      <h3 class="sub-heading">Button Anatomy</h3>
+      <div class="anatomy-card">
+        <div class="anatomy-preview">
+          <div class="mock-btn">
+            <span style="font-size:14px">➕</span>
+            Add Experience
+          </div>
+        </div>
+        <div class="anatomy-parts">
+          <div class="anatomy-part"><div class="anatomy-num">1</div><span class="anatomy-part-name">Container</span><span class="anatomy-part-desc">Frame with auto layout, inset padding bound to <code>button/inset/squish-md</code></span></div>
+          <div class="anatomy-part"><div class="anatomy-num">2</div><span class="anatomy-part-name">Label</span><span class="anatomy-part-desc">Text using <code>typography/label-lg</code>, color <code>content/on-color</code></span></div>
+          <div class="anatomy-part"><div class="anatomy-num">3</div><span class="anatomy-part-name">Leading Icon</span><span class="anatomy-part-desc">Optional. <code>Icon/</code> at size md (20px), visible via boolean property</span></div>
+          <div class="anatomy-part"><div class="anatomy-num">4</div><span class="anatomy-part-name">Background</span><span class="anatomy-part-desc">Fill bound to <code>button/bg/[variant]</code></span></div>
+        </div>
+      </div>
+
+      <h3 class="sub-heading">Molecule Component Checklist</h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Click each item to mark it complete. Use this before handing off any molecule to dev.</p>
+      <div class="checklist" id="molecule-checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Component is a <strong>Figma Component</strong> (not a plain frame)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Frame is named following the convention: <code>ComponentName/variant=default,size=md</code></div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">All fills are bound to <strong>Figma Variables</strong>, no hardcoded hex values</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">All spacing (padding, gap) is bound to spacing variables</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Text layers use a <strong>Text Style</strong>, not manual font settings</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Component has all required <strong>states</strong>: default, hover, pressed, disabled, focus</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Variants are defined as <strong>Component Properties</strong>, not separate frames</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Auto Layout is used for internal spacing (not absolute positioning)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Component is tested at all breakpoints / container sizes</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Component is documented with a description in Figma's component panel</div></div>
+      </div>
+
+      <div class="section-divider"></div>
+      <h3 class="sub-heading">Full Molecule Inventory</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Molecule</th><th>Variants</th><th>Key Tokens</th></tr></thead>
+        <tbody>
+          <tr><td>Button</td><td>primary, secondary, ghost, danger, icon-only / sm, md, lg</td><td>button/*, radius/*, spacing/*</td></tr>
+          <tr><td>Input</td><td>text, password, search, number / default, error, disabled</td><td>input/*, border/*, typography/*</td></tr>
+          <tr><td>Textarea</td><td>default, error, disabled</td><td>input/*, border/*, radius/*</td></tr>
+          <tr><td>Select</td><td>default, error, disabled</td><td>input/*, typography/label-md</td></tr>
+          <tr><td>Checkbox</td><td>unchecked, checked, indeterminate, disabled</td><td>color/brand/primary, radius/xs</td></tr>
+          <tr><td>Radio</td><td>unchecked, checked, disabled</td><td>color/brand/primary</td></tr>
+          <tr><td>Toggle</td><td>on, off, disabled</td><td>color/brand/primary, color/surface</td></tr>
+          <tr><td>Badge</td><td>default, success, warning, danger, info / sm, md</td><td>color/feedback/*, radius/full</td></tr>
+          <tr><td>Tag / Chip</td><td>default, removable, selected</td><td>color/surface, radius/full</td></tr>
+          <tr><td>Avatar</td><td>image, initials, icon / xs, sm, md, lg, xl</td><td>radius/full, typography/*</td></tr>
+          <tr><td>Tooltip</td><td>default, arrow-top/bottom/left/right</td><td>color/surface/inverse, shadow/md</td></tr>
+          <tr><td>Divider</td><td>horizontal, vertical / default, subtle, strong</td><td>color/border/*</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: ORGANISMS ════════════ -->
+  <div class="section" id="section-organisms">
+    <div class="section-inner">
+      <div class="level-badge organism">🦠 Level 3</div>
+      <h2 class="section-heading">Organisms</h2>
+      <p class="lead">Organisms are complex, self-contained UI sections. They compose multiple molecules and atoms into a functional unit. A Card is an organism. A Navbar is an organism. A Form is an organism.</p>
+
+      <div class="do-dont">
+        <div class="do-box">
+          <div class="do-label">✓ Valid Organisms</div>
+          <ul>
+            <li>Navbar (logo + nav links + CTA)</li>
+            <li>Card (image + content + actions)</li>
+            <li>Modal (header + body + footer)</li>
+            <li>Form (multiple inputs + button)</li>
+            <li>Data table with pagination</li>
+            <li>Product listing grid</li>
+            <li>Sidebar navigation</li>
+          </ul>
+        </div>
+        <div class="dont-box">
+          <div class="dont-label">✕ These are NOT Organisms</div>
+          <ul>
+            <li>A single Button → Molecule</li>
+            <li>An Input + Label → Molecule</li>
+            <li>Two buttons side by side → Molecule group</li>
+            <li>A full page layout → Template</li>
+            <li>A color token → Atom</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="sub-heading">Organism Inventory</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Organism</th><th>Composed Of</th><th>Figma Name</th></tr></thead>
+        <tbody>
+          <tr><td>Navbar</td><td>Logo atom, NavLink molecule, Button molecule</td><td>Organism/Navbar/[variant]</td></tr>
+          <tr><td>Experience Card</td><td>Image atom, Badge mol, Typography atoms, Button mol</td><td>Organism/Card/Experience</td></tr>
+          <tr><td>Booking Summary</td><td>Typography atoms, Divider atom, Price molecule</td><td>Organism/Booking/Summary</td></tr>
+          <tr><td>Search Bar</td><td>Input mol, Button mol, Select mol</td><td>Organism/SearchBar/[variant]</td></tr>
+          <tr><td>Modal</td><td>Overlay atom, Container, Typography, Button mol</td><td>Organism/Modal/[type]</td></tr>
+          <tr><td>Filter Panel</td><td>Checkbox mol, Toggle mol, Button mol</td><td>Organism/FilterPanel</td></tr>
+          <tr><td>Footer</td><td>Logo, NavLink mol, Typography atoms, Social icons</td><td>Organism/Footer</td></tr>
+          <tr><td>Notification Toast</td><td>Icon atom, Typography atoms, Button mol</td><td>Organism/Toast/[type]</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <span class="callout-icon">🔗</span>
+        <div class="callout-body">
+          <div class="callout-title">Organism Rule: Use Instances, Not Copies</div>
+          <p class="callout-text">When composing an organism, <strong>always use component instances</strong> of molecules and atoms — never detach and copy. If you detach, changes to the molecule no longer propagate to the organism. The entire value of the system collapses.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: TEMPLATES ════════════ -->
+  <div class="section" id="section-templates">
+    <div class="section-inner">
+      <div class="level-badge template">📐 Level 4</div>
+      <h2 class="section-heading">Templates</h2>
+      <p class="lead">Templates are page-level wireframes. They define layout, component placement, and content structure — but contain placeholder content, not real data. Templates are the contract between design and development for layout.</p>
+
+      <h3 class="sub-heading">Template Inventory</h3>
+      <table class="taxonomy-table">
+        <thead><tr><th>Template</th><th>Organisms Used</th><th>Breakpoints</th></tr></thead>
+        <tbody>
+          <tr><td>Homepage Template</td><td>Navbar, HeroBanner, SearchBar, CardGrid, Footer</td><td>All</td></tr>
+          <tr><td>Listing Template</td><td>Navbar, SearchBar, FilterPanel, CardGrid, Pagination</td><td>All</td></tr>
+          <tr><td>Experience Detail Template</td><td>Navbar, ImageGallery, Booking Summary, ReviewList, Footer</td><td>All</td></tr>
+          <tr><td>Checkout Template</td><td>Navbar, StepIndicator, Form, BookingSummary, Button</td><td>All</td></tr>
+          <tr><td>Dashboard Template</td><td>Sidebar, StatsRow, Table, Charts</td><td>md, lg, xl</td></tr>
+          <tr><td>Auth Template</td><td>CenteredCard, Form, Social Login, Footer</td><td>All</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">Templates Use Lorem Ipsum</div>
+          <p class="callout-text">Template content must be placeholder text and generic images. Real content goes in Pages. This separation lets developers implement the layout using the template before real content is ready — they are parallel workstreams.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: PAGES ════════════ -->
+  <div class="section" id="section-pages">
+    <div class="section-inner">
+      <div class="level-badge page">📄 Level 5</div>
+      <h2 class="section-heading">Pages</h2>
+      <p class="lead">Pages are templates populated with real content. They are the final design deliverable — what stakeholders review, what developers build from, and what gets tested by QA.</p>
+
+      <div class="callout do">
+        <span class="callout-icon">✓</span>
+        <div class="callout-body">
+          <div class="callout-title">Pages are the only place for real content</div>
+          <p class="callout-text">Real product copy, actual images, real pricing, actual user data scenarios — these only appear in Pages, never in Templates or below. This protects the system's reusability.</p>
+        </div>
+      </div>
+
+      <h3 class="sub-heading">Page Definition of Done</h3>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">All content is real (not placeholder)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">All three breakpoints are designed (mobile, tablet, desktop)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">All interactive states are shown (empty state, loading, error, success)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Dev notes are added to key interactions using Figma annotations</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Stakeholder review is complete and sign-off received</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Dev Mode link is shared with engineering</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: FIGMA RULES ════════════ -->
+  <div class="section" id="section-figma-rules">
+    <div class="section-inner">
+      <h2 class="section-heading">Figma Rules</h2>
+      <p class="lead">These rules are non-negotiable. Every designer on the team must follow them. They are what make MCP integration, dev handoff, and the manifest generator work correctly.</p>
+
+      <h3 class="sub-heading">The 10 Figma Commandments</h3>
+
+      <div class="figma-rule"><div class="figma-rule-num">1</div><div><div class="figma-rule-title">Name every frame, every time</div><div class="figma-rule-desc">No frame named "Frame 47" or "Group 3" leaves the Sandbox page. Every component frame must have a deliberate, meaningful name following the naming convention. Default Figma names are a red flag.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">2</div><div><div class="figma-rule-title">Every fill must be a Variable</div><div class="figma-rule-desc">No hardcoded hex values in fills or strokes. Every color applied in a design must be a bound Figma Variable from the Semantic collection. The DS Bridge plugin will flag violations.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">3</div><div><div class="figma-rule-title">Every spacing value must be a Variable</div><div class="figma-rule-desc">Padding, gap, and margin values in Auto Layout must be bound to spacing variables. Never type "16" manually in the padding field — select <code>spacing/4</code>.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">4</div><div><div class="figma-rule-title">Use Auto Layout for everything</div><div class="figma-rule-desc">No absolute positioning within components. All internal layout must use Auto Layout with proper horizontal and vertical constraints. This is what makes components resize correctly and what dev gets clean flex/grid output from MCP.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">5</div><div><div class="figma-rule-title">Components before raw shapes</div><div class="figma-rule-desc">Before drawing any shape, check if it already exists as a component. Use the instance, not a copy. If a variant doesn't exist, add it to the component — don't detach and modify.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">6</div><div><div class="figma-rule-title">Define all states as Component Properties</div><div class="figma-rule-desc">Hover, pressed, disabled, error, loading — all states must be variants in the Component Set, not separate frames elsewhere in the file. This is what makes prototype interaction work and what Cursor reads for state-aware code generation.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">7</div><div><div class="figma-rule-title">Apply Text Styles, not manual font settings</div><div class="figma-rule-desc">Never manually set font size, weight, or line height on a text layer. Always apply a named Text Style. If the right style doesn't exist, add it to the Foundations page — don't improvise.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">8</div><div><div class="figma-rule-title">Use Sections to organize the canvas</div><div class="figma-rule-desc">Every page must be organized with named Sections. Components inside a Section inherit the section name in the layer hierarchy. This dramatically improves MCP output quality because the agent understands context from the section name.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">9</div><div><div class="figma-rule-title">No design in the Sandbox after it's been approved</div><div class="figma-rule-desc">The Sandbox page is for exploration only. Once a component is approved, it moves to its correct level page. Working directly in the Sandbox and sharing those links to devs is not allowed.</div></div></div>
+
+      <div class="figma-rule"><div class="figma-rule-num">10</div><div><div class="figma-rule-title">Run DS Bridge before handoff</div><div class="figma-rule-desc">Before any component is marked ready for development, run the DS Bridge plugin's Audit command. Zero hardcoded values required. Fill in the code path. Export the manifest entry. Then hand off.</div></div></div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: NAMING ════════════ -->
+  <div class="section" id="section-naming">
+    <div class="section-inner">
+      <h2 class="section-heading">Naming Conventions</h2>
+      <p class="lead">Consistent naming is the backbone of the design system. It enables search, enables MCP to understand structure, and enables developers to map components without guessing.</p>
+
+      <h3 class="sub-heading">Component Naming Pattern</h3>
+      <div class="naming-block">
+<span class="comment">// Pattern: Level/ComponentName/variant=value,size=value</span>
+<br/><br/>
+<span class="comment">// Molecules</span>
+<br/><span class="key">Button</span><span class="sep">/</span><span class="val">variant=primary,size=md</span>
+<br/><span class="key">Button</span><span class="sep">/</span><span class="val">variant=ghost,size=sm</span>
+<br/><span class="key">Input</span><span class="sep">/</span><span class="val">type=text,state=error</span>
+<br/><span class="key">Badge</span><span class="sep">/</span><span class="val">variant=success,size=md</span>
+<br/><br/>
+<span class="comment">// Organisms</span>
+<br/><span class="key">Navbar</span><span class="sep">/</span><span class="val">variant=default</span>
+<br/><span class="key">Card</span><span class="sep">/</span><span class="val">type=experience,state=default</span>
+<br/><span class="key">Modal</span><span class="sep">/</span><span class="val">type=confirmation</span>
+<br/><br/>
+<span class="comment">// Templates</span>
+<br/><span class="key">Template</span><span class="sep">/</span><span class="val">ListingPage/breakpoint=desktop</span>
+<br/><span class="key">Template</span><span class="sep">/</span><span class="val">ExperienceDetail/breakpoint=mobile</span>
+      </div>
+
+      <h3 class="sub-heading">Variable Naming Pattern</h3>
+      <div class="naming-block">
+<span class="comment">// Pattern: category/subcategory/variant (all lowercase, slash-separated)</span>
+<br/><br/>
+<span class="comment">// Colors</span>
+<br/><span class="key">color</span><span class="sep">/</span><span class="val">background</span><span class="sep">/</span><span class="accent">default</span>
+<br/><span class="key">color</span><span class="sep">/</span><span class="val">brand</span><span class="sep">/</span><span class="accent">primary</span>
+<br/><span class="key">color</span><span class="sep">/</span><span class="val">feedback</span><span class="sep">/</span><span class="accent">danger</span>
+<br/><br/>
+<span class="comment">// Spacing</span>
+<br/><span class="key">spacing</span><span class="sep">/</span><span class="val">1</span>  <span class="comment">→ 4px</span>
+<br/><span class="key">spacing</span><span class="sep">/</span><span class="val">4</span>  <span class="comment">→ 16px (md)</span>
+<br/><span class="key">spacing</span><span class="sep">/</span><span class="val">6</span>  <span class="comment">→ 24px (lg)</span>
+<br/><br/>
+<span class="comment">// Typography</span>
+<br/><span class="key">type</span><span class="sep">/</span><span class="val">size</span><span class="sep">/</span><span class="accent">body-md</span>  <span class="comment">→ 15px</span>
+<br/><span class="key">type</span><span class="sep">/</span><span class="val">weight</span><span class="sep">/</span><span class="accent">semibold</span>  <span class="comment">→ 600</span>
+      </div>
+
+      <h3 class="sub-heading">Figma Layer Naming</h3>
+      <div class="do-dont">
+        <div class="do-box">
+          <div class="do-label">✓ Good Layer Names</div>
+          <ul>
+            <li><code>icon/leading</code></li>
+            <li><code>label</code></li>
+            <li><code>container/background</code></li>
+            <li><code>state=hover</code></li>
+            <li><code>slot/content</code></li>
+          </ul>
+        </div>
+        <div class="dont-box">
+          <div class="dont-label">✕ Bad Layer Names</div>
+          <ul>
+            <li><code>Frame 47</code></li>
+            <li><code>Group 3</code></li>
+            <li><code>Rectangle 12</code></li>
+            <li><code>text copy 2</code></li>
+            <li><code>Untitled</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: VARIABLES ════════════ -->
+  <div class="section" id="section-variables">
+    <div class="section-inner">
+      <h2 class="section-heading">Figma Variables Setup</h2>
+      <p class="lead">This is the step-by-step guide for setting up Figma Variables correctly. Follow this exact sequence. Getting the structure right here makes everything downstream — dark mode, MCP, tokens export — work automatically.</p>
+
+      <h3 class="sub-heading">Step-by-Step Setup</h3>
+      <div class="phase-tracker">
+        <div class="phase-item">
+          <div class="phase-dot-wrap">
+            <div class="phase-dot active">1</div>
+            <div class="phase-line"></div>
+          </div>
+          <div class="phase-content">
+            <div class="phase-title">Create the Primitives Collection</div>
+            <div class="phase-items">Open Variables panel → New Collection → Name it <strong>"Primitives"</strong>. Add all raw color values (full palette: every color at 50–950 scale). Add size values (4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96). <strong>Do not hide this collection yet.</strong></div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-dot-wrap">
+            <div class="phase-dot">2</div>
+            <div class="phase-line"></div>
+          </div>
+          <div class="phase-content">
+            <div class="phase-title">Create the Semantic Collection with Modes</div>
+            <div class="phase-items">New Collection → Name it <strong>"Semantic"</strong>. Add two modes: <strong>"Light"</strong> and <strong>"Dark"</strong>. For each semantic token, set Light value to a Primitive alias and Dark value to a different Primitive alias.</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-dot-wrap">
+            <div class="phase-dot">3</div>
+            <div class="phase-line"></div>
+          </div>
+          <div class="phase-content">
+            <div class="phase-title">Suppress Primitives from Picker</div>
+            <div class="phase-items">In the Primitives collection, enable <strong>"Hide from publishing"</strong>. This removes it from the variable picker dropdown — designers will only see Semantic. This prevents accidental primitive usage.</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-dot-wrap">
+            <div class="phase-dot">4</div>
+          </div>
+          <div class="phase-content">
+            <div class="phase-title">Apply Semantic Variables to all existing components</div>
+            <div class="phase-items">Go through every component on Atoms, Molecules, Organisms pages. For each fill: click the color → switch from hex to Variable → select the correct Semantic token. Run DS Bridge Audit to verify coverage.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <div class="callout-title">Migration is the hardest part</div>
+          <p class="callout-text">Existing components with hardcoded colors must be migrated. This is manual work. Prioritize: Atoms first, then Molecules, then Organisms. Use the DS Bridge Audit to track progress — the hardcoded rate dropping toward 0% is your north star metric.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: HANDOFF ════════════ -->
+  <div class="section" id="section-handoff">
+    <div class="section-inner">
+      <h2 class="section-heading">Dev Handoff</h2>
+      <p class="lead">The handoff process is a structured workflow, not a "drop the Figma link in Slack" moment. Every handoff must include the right context so developers can build without guessing.</p>
+
+      <h3 class="sub-heading">Handoff Package (per component)</h3>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text"><strong>Figma Dev Mode link</strong> — not the editor link, the Dev Mode link</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text"><strong>DS Bridge manifest entry</strong> — JSON with code path, tokens, variants</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text"><strong>Interaction notes</strong> — what happens on hover, press, focus, error</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text"><strong>Edge cases documented</strong> — empty state, long text, overflow behavior</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text"><strong>All breakpoints provided</strong> — mobile, tablet, desktop frames visible</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text"><strong>Assets exported</strong> — icons as SVG, images at 2x, in the Figma export panel</div></div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">🤖</span>
+        <div class="callout-body">
+          <div class="callout-title">For AI-assisted development (Cursor / Claude Code)</div>
+          <p class="callout-text">When handing off to a developer using Cursor or Claude Code, provide: the Figma node link, the manifest entry for this component, and the <code>.cursorrules</code> file path in the repo. The agent will use all three together. Never provide just the Figma link — it gets raw hex values without the manifest context.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: CHECKLIST ════════════ -->
+  <div class="section" id="section-checklist">
+    <div class="section-inner">
+      <h2 class="section-heading">Build Checklist</h2>
+      <p class="lead">Use this master checklist to build the design system from scratch. Each phase must be complete before the next one begins.</p>
+
+      <h3 class="sub-heading">Phase 1 — Foundation (Week 1–2)</h3>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Define complete color palette (primitive values)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Define semantic color roles (Light + Dark modes)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Set up Figma Variable collections (Primitives + Semantic)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Define typography scale and create all Text Styles</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Define spacing scale and create spacing variables</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Define border radius scale and create radius variables</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Create Foundations Figma page with all tokens documented</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Export tokens JSON (via Tokens Studio plugin)</div></div>
+      </div>
+
+      <h3 class="sub-heading">Phase 2 — Atoms (Week 2–3)</h3>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Create icon library with naming convention</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Create Divider component (horizontal + vertical)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Create Spinner / Loading indicator</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Create Status Dot component</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Create Skeleton loader shapes</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">All atoms pass DS Bridge Audit (0 hardcoded values)</div></div>
+      </div>
+
+      <h3 class="sub-heading">Phase 3 — Molecules (Week 3–5)</h3>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Button (all variants + states)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Input (text, password, search + states)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Select dropdown</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Checkbox, Radio, Toggle</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Badge, Tag, Chip</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Avatar</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Tooltip</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">All molecules pass molecule checklist</div></div>
+      </div>
+
+      <h3 class="sub-heading">Phase 4 — Organisms + Templates (Week 5–8)</h3>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Navbar (desktop + mobile)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Experience Card</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Modal system</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Form organism</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">All page templates (3 breakpoints each)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">DS Bridge manifest for all organisms</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SECTION: ROADMAP ════════════ -->
+  <div class="section" id="section-roadmap">
+    <div class="section-inner">
+      <h2 class="section-heading">Design System Roadmap</h2>
+      <p class="lead">The design system is a living product. This roadmap shows what comes after the initial build.</p>
+
+      <div class="phase-tracker">
+        <div class="phase-item">
+          <div class="phase-dot-wrap">
+            <div class="phase-dot active">Q1</div>
+            <div class="phase-line"></div>
+          </div>
+          <div class="phase-content">
+            <div class="phase-title">Foundation & Core Components</div>
+            <div class="phase-items">Token architecture · Atoms · Core molecules (Button, Input, Badge) · Figma Variable migration · DS Bridge plugin integration · .cursorrules file committed to repo</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-dot-wrap">
+            <div class="phase-dot">Q2</div>
+            <div class="phase-line"></div>
+          </div>
+          <div class="phase-content">
+            <div class="phase-title">Full Component Library</div>
+            <div class="phase-items">All molecules complete · All organisms · Page templates for all core flows · Storybook setup · Visual regression testing · Token export pipeline (style-dictionary)</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-dot-wrap">
+            <div class="phase-dot">Q3</div>
+            <div class="phase-line"></div>
+          </div>
+          <div class="phase-content">
+            <div class="phase-title">Dark Mode & Theming</div>
+            <div class="phase-items">Dark mode token values complete · ThemeProvider in codebase · One-click Figma mode switch verified · Accessibility audit (WCAG AA for all token pairs)</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-dot-wrap">
+            <div class="phase-dot">Q4</div>
+          </div>
+          <div class="phase-content">
+            <div class="phase-title">Governance & Automation</div>
+            <div class="phase-items">ESLint rule for no-hardcoded-values · Figma linter plugin · CI token export on merge · Component contribution guidelines published · Design system versioning (semver)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">📊</span>
+        <div class="callout-body">
+          <div class="callout-title">Key Metrics to Track</div>
+          <p class="callout-text">Track these monthly: Hardcoded value rate in Figma (target: 0%), Component coverage (% of product screens using DS components vs custom), Token adoption in codebase (% of styled-components using theme tokens vs static values), Handoff cycle time (days from design complete to dev start).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.main -->
+
+<!-- Mobile menu toggle -->
+<button class="menu-toggle" id="menu-toggle">☰</button>
+
+<script>
+// ════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════
+
+const sections = {
+  overview:     { title: 'Overview',            eyebrow: 'Getting Started',    desc: 'Your team\'s entry point to the WanderOn design system. Start here.' },
+  philosophy:   { title: 'Core Philosophy',     eyebrow: 'Getting Started',    desc: 'The three principles that govern every design decision in this system.' },
+  taxonomy:     { title: 'DS Taxonomy',         eyebrow: 'Getting Started',    desc: 'Complete classification of every design element and where it lives.' },
+  tokens:       { title: 'Design Tokens',       eyebrow: 'Foundations',        desc: 'The DNA of the system. Everything is a token, or built from tokens.' },
+  color:        { title: 'Color System',        eyebrow: 'Foundations',        desc: 'Primitive palette → semantic roles → component-scoped colors.' },
+  typography:   { title: 'Typography',          eyebrow: 'Foundations',        desc: 'Type scale, text styles, and typography variables on the 4pt grid.' },
+  spacing:      { title: 'Spacing & Grid',      eyebrow: 'Foundations',        desc: 'All spacing is a multiple of 4px. Breakpoints, columns, gutters.' },
+  effects:      { title: 'Effects & Motion',    eyebrow: 'Foundations',        desc: 'Elevation shadows, blur, opacity, and motion tokens.' },
+  atoms:        { title: 'Atoms',               eyebrow: 'Atomic Level 1',     desc: 'The smallest UI units — tokens, icons, dividers, and base styles.' },
+  molecules:    { title: 'Molecules',           eyebrow: 'Atomic Level 2',     desc: 'Simple functional components built from atoms. Buttons, inputs, badges.' },
+  organisms:    { title: 'Organisms',           eyebrow: 'Atomic Level 3',     desc: 'Complex sections composed of molecules. Cards, navbars, modals, forms.' },
+  templates:    { title: 'Templates',           eyebrow: 'Atomic Level 4',     desc: 'Page-level wireframes with placeholder content and component slots.' },
+  pages:        { title: 'Pages',               eyebrow: 'Atomic Level 5',     desc: 'Templates with real content. The final deliverable for dev handoff.' },
+  'figma-rules':{ title: 'Figma Rules',         eyebrow: 'Figma Practice',     desc: '10 non-negotiable rules every designer must follow in Figma.' },
+  naming:       { title: 'Naming Conventions',  eyebrow: 'Figma Practice',     desc: 'Component, variable, layer, and file naming patterns.' },
+  variables:    { title: 'Variables Setup',     eyebrow: 'Figma Practice',     desc: 'Step-by-step guide to setting up Figma Variables correctly.' },
+  handoff:      { title: 'Dev Handoff',         eyebrow: 'Figma Practice',     desc: 'What goes in a handoff package and how to hand off for AI-assisted dev.' },
+  checklist:    { title: 'Build Checklist',     eyebrow: 'Governance',         desc: 'Master checklist for building the system phase by phase.' },
+  roadmap:      { title: 'Roadmap',             eyebrow: 'Governance',         desc: 'What comes next — Q1 through Q4 milestones and key metrics.' }
+};
+
+let visited = new Set(['overview']);
+
+function navigate(sectionId) {
+  // Hide all sections
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  // Show target
+  const target = document.getElementById('section-' + sectionId);
+  if (target) target.classList.add('active');
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.querySelector(`[data-section="${sectionId}"]`);
+  if (navItem) navItem.classList.add('active');
+
+  // Update header
+  const info = sections[sectionId];
+  if (info) {
+    document.getElementById('header-eyebrow').textContent = info.eyebrow;
+    document.getElementById('header-title').textContent   = info.title;
+    document.getElementById('header-desc').textContent    = info.desc;
+    document.getElementById('breadcrumb-current').textContent = info.title;
+  }
+
+  // Track visited
+  visited.add(sectionId);
+  updateProgress();
+
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+
+  // Scroll to top
+  document.querySelector('.main').scrollTo(0, 0);
+  window.scrollTo(0, 0);
+}
+
+function updateProgress() {
+  const total = Object.keys(sections).length;
+  const pct   = Math.round((visited.size / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent  = pct + '%';
+  document.getElementById('progress-label').textContent = `${visited.size}/${total} sections read`;
+}
+
+// Nav item clicks
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.preventDefault();
+    navigate(item.dataset.section);
+  });
+});
+
+// ════════════════════════════════════════════════════════
+// ACCORDIONS
+// ════════════════════════════════════════════════════════
+function toggleAcc(header) {
+  const item = header.parentElement;
+  item.classList.toggle('open');
+}
+
+// ════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════
+function switchTab(btn, paneId) {
+  const container = btn.closest('.section-inner') || btn.closest('.section');
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const pane = document.getElementById(paneId);
+  if (pane) pane.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+// CHECKLIST
+// ════════════════════════════════════════════════════════
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  item.querySelector('.check-box').textContent = item.classList.contains('checked') ? '✓' : '';
+}
+
+// ════════════════════════════════════════════════════════
+// SEARCH
+// ════════════════════════════════════════════════════════
+document.getElementById('search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = !q || text.includes(q) ? '' : 'none';
+  });
+  document.querySelectorAll('.sidebar-section-label').forEach(label => {
+    const section = label.closest('.sidebar-section');
+    const visible = [...section.querySelectorAll('.nav-item')].some(i => i.style.display !== 'none');
+    section.style.display = visible ? '' : 'none';
+  });
+});
+
+// ════════════════════════════════════════════════════════
+// COPY SECTION
+// ════════════════════════════════════════════════════════
+function copyCurrentSection() {
+  const active = document.querySelector('.section.active');
+  if (!active) return;
+  const text = active.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.topbar-btn.primary');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// MOBILE MENU
+// ════════════════════════════════════════════════════════
+document.getElementById('menu-toggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+});
+document.getElementById('overlay').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+});
+
+// ════════════════════════════════════════════════════════
+// INTRO CARDS → navigate on click
+// ════════════════════════════════════════════════════════
+// Already handled inline via onclick attributes
+
+// ════════════════════════════════════════════════════════
+// KEYBOARD NAVIGATION
+// ════════════════════════════════════════════════════════
+const sectionKeys = Object.keys(sections);
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  const active = document.querySelector('.nav-item.active');
+  if (!active) return;
+  const currentIdx = sectionKeys.indexOf(active.dataset.section);
+  if (e.key === 'ArrowDown' || e.key === 'j') {
+    e.preventDefault();
+    const next = sectionKeys[currentIdx + 1];
+    if (next) navigate(next);
+  }
+  if (e.key === 'ArrowUp' || e.key === 'k') {
+    e.preventDefault();
+    const prev = sectionKeys[currentIdx - 1];
+    if (prev) navigate(prev);
+  }
+});
+
+// Init
+updateProgress();
+</script>
+</body>
+</html>
